@@ -1,0 +1,56 @@
+name: CI_CD_for_testing_basic _workflow
+
+on:
+    push: 
+        branches: ["master"]
+    pull_request:
+        branches: ["master"]
+jobs:
+    build-and-test:
+        runs-on: ubuntu-latest
+        steps:
+        - name: checkout code
+          uses: actions/checkout@v3
+        - name: setup python
+          uses: actions/setup-python@v4
+          with:
+            python-version: '3.9'
+        - name: install dependencies
+          run: |
+            pip install flask
+            pip install pytest
+        - name: Run Test
+          run: |
+            pytest
+    build-and-publish:
+        needs: build-and-test
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout Code
+          uses: actions/checkout@v3
+        - name: build-docker-for-deploy
+          uses: docker/setup-buildx-actions@v2
+        - name: Login to Dockerhub
+          uses: docker/login-actions@v2
+          with: 
+            username: ${{secrets.DOCKER_USERNAME}}
+            password: ${{secrets.DOCKER_PASSWORD}}
+        - name: build-push-docker-image
+          uses: docker/build-push-action@v4
+          with:
+            context: .
+            push: True
+            tags: ${{secrets.DOCKER_USERNAME}}/FlasktestappD:V1
+        - name: Image Digest
+          run: echo ${{steps.build-and-publish.outputs.digest}}
+          
+          
+
+
+
+
+
+
+    build-and-deploy:
+
+
