@@ -1,4 +1,4 @@
-name: CI_CD_for_testing_basic _workflow
+name: CI_CD_for_testing_basic_workflow
 
 on:
     push: 
@@ -43,7 +43,7 @@ jobs:
             tags: ${{secrets.DOCKER_USERNAME}}/FlasktestappD:V1
         - name: Image Digest
           run: echo ${{steps.build-and-publish.outputs.digest}}
-          
+
           
 
 
